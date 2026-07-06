@@ -4,7 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0A2A33">
-<title>TA DIAGNOSIS — Player Scan v0.5α</title>
+<title>TA診断アプリ — エゴグラム（交流分析）50問セルフチェック</title>
+<meta name="description" content="交流分析（TA）に基づくエゴグラム診断アプリ。50問に答えるとCP・NP・A・FC・ACの5尺度を計算し、あなたのタイプを25クラスで表示します。完全オフライン・データは端末内のみ。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="TA診断アプリ — エゴグラム（交流分析）">
+<meta property="og:description" content="50問でわかる、あなたの5つの自我状態バランス。完全オフラインで動作、データは端末内のみに保存されます。">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="robots" content="index,follow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+JP:wght@400;500;700;900&family=Noto+Serif+JP:wght@500;700&family=Oswald:wght@400;500;700&display=swap" rel="stylesheet">
@@ -1520,6 +1526,16 @@
     color: var(--ink-faint);
     letter-spacing: 0.2em;
   }
+  .disclaimer-note {
+    margin: 28px auto 0;
+    max-width: 640px;
+    padding: 14px 18px;
+    background: var(--line-soft);
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.8;
+    color: var(--ink-soft);
+  }
 
   /* Print */
   @media print {
@@ -1560,7 +1576,7 @@
       <div class="brand-jp">TA診断アプリ</div>
     </div>
   </div>
-  <div class="topbar-version">v0.5α</div>
+  <div class="topbar-version">v1.0</div>
 </div>
 
 <div class="app">
@@ -1707,6 +1723,10 @@
         <span class="welcome-feature-text">チームやクラブでも活用</span>
       </div>
     </div>
+
+    <p class="disclaimer-note">
+      ※ 本アプリは交流分析（TA）理論に基づくセルフチェックツールであり、医学的・心理学的・臨床的な診断ではありません。結果は自己理解のための参考情報としてご活用ください。回答・結果はお使いの端末（ブラウザ）内にのみ保存され、サーバーには一切送信されません。
+    </p>
   </section>
 
   <!-- ============================================================
@@ -2005,6 +2025,10 @@
         もう一度診断
       </button>
     </div>
+
+    <p class="disclaimer-note">
+      ※ 本アプリは交流分析（TA）理論に基づくセルフチェックツールであり、医学的・心理学的・臨床的な診断ではありません。結果は自己理解のための参考情報です。回答・結果は端末内にのみ保存され、サーバーには送信されません。
+    </p>
   </section>
 
   <!-- ============================================================
@@ -2066,7 +2090,7 @@
     <span class="app-footer-logo-text">TA DIAGNOSIS</span>
   </div>
   <div class="app-footer-tagline">クライミングは、自分を強くする。</div>
-  <div class="app-footer-en">CLIMB HIGHER, BE YOUR BEST. ・ v0.5α</div>
+  <div class="app-footer-en">CLIMB HIGHER, BE YOUR BEST. ・ v1.0</div>
 </div>
 
 <script src="js/core.js"></script>
@@ -2256,7 +2280,19 @@ const STATE = {
   result: null
 };
 
-const STORAGE_KEY = 'ta_v05a_state';
+const STORAGE_KEY = 'ta_egogram_state';
+const LEGACY_STORAGE_KEY = 'ta_v05a_state'; // v0.5α の保存キー（初回に移行する）
+
+// 旧キーに保存があれば新キーへ移行して旧キーを削除
+(function migrateLegacyStorage() {
+  try {
+    if (!localStorage.getItem(STORAGE_KEY)) {
+      const legacy = localStorage.getItem(LEGACY_STORAGE_KEY);
+      if (legacy) localStorage.setItem(STORAGE_KEY, legacy);
+    }
+    localStorage.removeItem(LEGACY_STORAGE_KEY);
+  } catch(e) {}
+})();
 
 let storageWarned = false;
 function saveState() {

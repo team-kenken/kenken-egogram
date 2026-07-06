@@ -12,5 +12,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 22
-      # 依存ゼロ（npm install 不要）。計算コアの正確性テストを全数実行する
-      - run: node --test test/
+      # 依存ゼロ（npm install 不要）。計算コアの正確性テストを全数実行する。
+      # 引数なしの `node --test` は test/**/*.test.js を自動検出する（`node --test test/` は
+      # 一部の Node で 'test' をモジュール名と解釈して失敗するため使わない）。
+      - run: node --test

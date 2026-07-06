@@ -56,6 +56,9 @@ node --test
 # クラス判定の網羅テストを粗い刻みで速く回す
 EGOGRAM_STEP=3 node --test
 
+# （注）テストは `node --test`（引数なし）で test/ を自動検出します。
+# `node --test test/` は一部の Node バージョンで失敗します。
+
 # レアリティテーブルの再生成
 node tools/build-rarity.mjs
 ```

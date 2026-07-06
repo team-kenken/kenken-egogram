@@ -1629,7 +1629,7 @@
     <div class="mode-section-eyebrow">[ SELECT MODE ]</div>
     <h2 class="mode-section-title">まずはモードを選択</h2>
     <p class="mode-section-desc">
-      個人で診断するか、家族みんなで診断するかを選びます。家族モードはβ版で順次解放予定です。
+      個人で診断するか、家族みんなの結果を見るかを選びます。
     </p>
 
     <div class="mode-grid">
@@ -1653,8 +1653,7 @@
         <div class="mode-card-cta">START SCAN →</div>
       </div>
 
-      <div class="mode-card locked" onclick="showFamilyLocked()">
-        <div class="mode-card-locked-badge">COMING SOON</div>
+      <div class="mode-card" onclick="goFamily()">
         <div class="mode-card-icon-wrap">
           <svg class="mode-card-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
@@ -1671,9 +1670,9 @@
         <ul class="mode-card-features">
           <li>家族の重ね合わせチャート</li>
           <li>相性ヒントと関わり方</li>
-          <li>ジュニアアスリートに特化</li>
+          <li>最大5人まで保存できる</li>
         </ul>
-        <div class="mode-card-cta">v0.5β で解放予定</div>
+        <div class="mode-card-cta">VIEW FAMILY →</div>
       </div>
     </div>
 
@@ -1758,6 +1757,23 @@
         </select>
       </div>
 
+      <div id="f-sport-other-wrap" class="field-group" style="display:none">
+        <label class="field-label">SPORT NAME <span class="field-label-jp">競技名（任意）</span></label>
+        <input id="f-sport-other" class="field-input" type="text" list="sport-list" placeholder="例：野球" maxlength="20" autocomplete="off">
+        <datalist id="sport-list">
+          <option value="野球"></option>
+          <option value="サッカー"></option>
+          <option value="バスケットボール"></option>
+          <option value="バレーボール"></option>
+          <option value="テニス"></option>
+          <option value="卓球"></option>
+          <option value="水泳"></option>
+          <option value="陸上"></option>
+          <option value="体操"></option>
+          <option value="柔道"></option>
+        </datalist>
+      </div>
+
       <div id="f-discipline-wrap" class="field-group">
         <label class="field-label">DISCIPLINE <span class="field-label-jp">種目</span></label>
         <div class="pill-group">
@@ -1797,43 +1813,31 @@
               <div class="avatar-role">男子選手</div>
             </div>
           </div>
-          <div class="avatar-card locked" data-avatar="f">
-            <div class="avatar-img-wrap" style="background:var(--line-soft);display:flex;align-items:center;justify-content:center;">
-              <svg style="width:32px;height:32px;color:var(--ink-faint);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
+          <div class="avatar-card" data-avatar="f" onclick="selectAvatar('f')">
+            <div class="avatar-img-wrap">
+              <img class="avatar-img" src="assets/avatar-f.svg" alt="女子選手">
             </div>
             <div class="avatar-meta">
               <div class="avatar-name">CLIMBER 024</div>
               <div class="avatar-role">女子選手</div>
-              <div class="avatar-locked-tag">v0.5β UNLOCK</div>
             </div>
           </div>
-          <div class="avatar-card locked" data-avatar="d">
-            <div class="avatar-img-wrap" style="background:var(--line-soft);display:flex;align-items:center;justify-content:center;">
-              <svg style="width:32px;height:32px;color:var(--ink-faint);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
+          <div class="avatar-card" data-avatar="d" onclick="selectAvatar('d')">
+            <div class="avatar-img-wrap">
+              <img class="avatar-img" src="assets/avatar-d.svg" alt="父・応援役">
             </div>
             <div class="avatar-meta">
               <div class="avatar-name">FATHER</div>
               <div class="avatar-role">父・応援役</div>
-              <div class="avatar-locked-tag">v0.5β UNLOCK</div>
             </div>
           </div>
-          <div class="avatar-card locked" data-avatar="mo">
-            <div class="avatar-img-wrap" style="background:var(--line-soft);display:flex;align-items:center;justify-content:center;">
-              <svg style="width:32px;height:32px;color:var(--ink-faint);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
+          <div class="avatar-card" data-avatar="mo" onclick="selectAvatar('mo')">
+            <div class="avatar-img-wrap">
+              <img class="avatar-img" src="assets/avatar-mo.svg" alt="母・サポート役">
             </div>
             <div class="avatar-meta">
               <div class="avatar-name">MOTHER</div>
               <div class="avatar-role">母・サポート役</div>
-              <div class="avatar-locked-tag">v0.5β UNLOCK</div>
             </div>
           </div>
         </div>
@@ -1885,7 +1889,7 @@
   <section id="screen-result" class="screen hidden">
     <!-- CLASS Hero -->
     <div class="class-hero">
-      <img class="class-hero-bg-img" src="assets/avatar-m.svg" alt="">
+      <img class="class-hero-bg-img" id="class-hero-bg-img" src="assets/avatar-m.svg" alt="">
       <div class="class-hero-content">
         <div class="class-hero-eyebrow" id="class-hero-eyebrow">YOUR CLASS</div>
         <div class="class-hero-rarity" id="class-hero-rarity">EPIC</div>
@@ -1943,14 +1947,14 @@
     </div>
 
     <!-- PLAYER CARD -->
-    <div class="result-section">
+    <div class="result-section" id="section-player-card">
       <div class="result-section-eyebrow">SHARE</div>
       <h3 class="result-section-title2">PLAYER CARD</h3>
       <p class="result-section-desc">あなたの結果を1枚のカードに。スクリーンショットで保存して、家族やコーチとシェアできます。</p>
       <div class="player-card-wrap">
         <div class="player-card">
           <div class="player-card-banner">PLAYER PROFILE</div>
-          <img class="player-card-bg-img" src="assets/avatar-m.svg" alt="">
+          <img class="player-card-bg-img" id="player-card-bg-img" src="assets/avatar-m.svg" alt="">
           <div class="player-card-body">
             <div class="player-card-top">
               <div class="player-card-num" id="pc-num">CARD 04 / 25</div>
@@ -1979,7 +1983,19 @@
     </div>
 
     <!-- Actions -->
-    <div class="result-actions">
+    <div class="result-actions" id="result-actions">
+      <button class="btn btn-primary" onclick="shareResultUrl()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/><line x1="15.4" y1="6.5" x2="8.6" y2="10.5"/></svg>
+        結果URLをシェア
+      </button>
+      <button class="btn btn-secondary" onclick="downloadCardImage()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7,10 12,15 17,10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        カード画像を保存
+      </button>
+      <button class="btn btn-secondary" onclick="saveAsMember()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+        家族メンバーに保存
+      </button>
       <button class="btn btn-secondary" onclick="window.print()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 6,2 18,2 18,9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
         印刷 / PDF保存
@@ -1988,6 +2004,53 @@
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1,4 1,10 7,10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
         もう一度診断
       </button>
+    </div>
+  </section>
+
+  <!-- ============================================================
+       SCREEN: FAMILY
+       ============================================================ -->
+  <section id="screen-family" class="screen hidden">
+    <div class="step-header">
+      <button class="step-back" onclick="goWelcome()">← 戻る</button>
+      <div class="step-eyebrow">FAMILY SCAN ・ 家族モード</div>
+      <h2 class="step-title">家族のエゴグラム</h2>
+      <p class="step-desc">保存した家族メンバー（最大5人）のエゴグラムを重ねて比較できます。診断結果の画面で「家族メンバーに保存」を押すと、ここに追加されます。</p>
+    </div>
+
+    <div id="family-empty" class="form-card" style="text-align:center;">
+      <p style="margin:8px 0 16px;">まだメンバーがいません。<br>まずは個人モードで診断して、結果画面の「家族メンバーに保存」を押してください。</p>
+      <button class="btn btn-primary" onclick="startPersonal()">個人モードで診断する</button>
+    </div>
+
+    <div id="family-content">
+      <div class="result-section">
+        <div class="result-section-eyebrow">OVERLAY RADAR</div>
+        <h3 class="result-section-title2">家族の重ね合わせチャート</h3>
+        <p class="result-section-desc">形が似ているほど、感じ方や行動のパターンが近い傾向があります。</p>
+        <div class="radar-wrap">
+          <svg id="family-radar-svg" class="radar-svg" viewBox="0 0 320 320" xmlns="http://www.w3.org/2000/svg" role="img"></svg>
+        </div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-eyebrow">MEMBERS</div>
+        <h3 class="result-section-title2">メンバー一覧</h3>
+        <div id="family-list"></div>
+      </div>
+
+      <div class="result-section">
+        <div class="result-section-eyebrow">HINTS</div>
+        <h3 class="result-section-title2">それぞれへの関わり方</h3>
+        <p class="result-section-desc">各メンバーの最も高い自我状態に合わせた、声のかけ方・接し方のヒントです。</p>
+        <div id="family-hints"></div>
+      </div>
+
+      <div class="result-actions">
+        <button class="btn btn-primary" onclick="startPersonal()">
+          新しく診断する
+        </button>
+      </div>
     </div>
   </section>
 
@@ -2195,8 +2258,15 @@ const STATE = {
 
 const STORAGE_KEY = 'ta_v05a_state';
 
+let storageWarned = false;
 function saveState() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); } catch(e) {}
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(STATE)); }
+  catch(e) {
+    if (!storageWarned) {
+      storageWarned = true;
+      showToast('端末への保存ができません（プライベートモード等）。診断は続行できますが、途中保存・履歴は残りません');
+    }
+  }
 }
 function loadState() {
   try {
@@ -2257,8 +2327,22 @@ function startPersonal() {
   showScreen('screen-profile');
 }
 
-function showFamilyLocked() {
-  alert('家族モードは v0.5β で解放予定です。\nまずは個人モードでお試しください。');
+/* ============================================================
+   TOAST（画面内通知）
+   ============================================================ */
+let toastTimer = null;
+function showToast(msg) {
+  let el = document.getElementById('app-toast');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'app-toast';
+    el.style.cssText = 'position:fixed;left:50%;bottom:32px;transform:translateX(-50%);background:#0A2A33;color:#E8F4F8;padding:12px 20px;border-radius:8px;font-size:14px;z-index:9999;box-shadow:0 4px 16px rgba(0,0,0,.3);transition:opacity .3s;max-width:90vw;';
+    document.body.appendChild(el);
+  }
+  el.textContent = msg;
+  el.style.opacity = '1';
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.style.opacity = '0'; }, 3000);
 }
 
 /* ============================================================
@@ -2280,8 +2364,9 @@ fAge.addEventListener('change', validateProfile);
 fGender.addEventListener('change', validateProfile);
 
 function onSportChange() {
-  const isClimbing = fSport.value === 'climbing';
-  document.getElementById('f-discipline-wrap').style.display = isClimbing ? '' : 'none';
+  const v = fSport.value;
+  document.getElementById('f-discipline-wrap').style.display = v === 'climbing' ? '' : 'none';
+  document.getElementById('f-sport-other-wrap').style.display = v === 'other' ? '' : 'none';
 }
 
 function selectDiscipline(d) {
@@ -2291,11 +2376,15 @@ function selectDiscipline(d) {
   });
 }
 
+const AVATAR_SRC = {
+  m:  'assets/avatar-m.svg',
+  f:  'assets/avatar-f.svg',
+  d:  'assets/avatar-d.svg',
+  mo: 'assets/avatar-mo.svg'
+};
+
 function selectAvatar(a) {
-  if (a !== 'm') {
-    alert('このアバターは v0.5β で解放されます。\n現在は男子選手のみ選択できます。');
-    return;
-  }
+  if (!AVATAR_SRC[a]) return;
   STATE.profile.avatar = a;
   document.querySelectorAll('.avatar-card').forEach(c => {
     c.classList.toggle('selected', c.dataset.avatar === a);
@@ -2307,6 +2396,8 @@ function profileNext() {
   STATE.profile.age = fAge.value;
   STATE.profile.gender = fGender.value;
   STATE.profile.sport = fSport.value;
+  STATE.profile.sportOther = fSport.value === 'other'
+    ? document.getElementById('f-sport-other').value.trim() : '';
   STATE.answers = new Array(50).fill(null);
   STATE.currentIndex = 0;
   STATE.result = null;
@@ -2473,8 +2564,11 @@ function renderEgogramSVG(scores) {
   svg.innerHTML = parts.join('');
 }
 
-function renderRadarSVG(scores) {
-  const svg = document.getElementById('radar-svg');
+/**
+ * レーダーチャート描画（複数系列対応）。
+ * series: [{ scores, color }] の配列。1系列のときのみ軸下に数値を表示する。
+ */
+function renderRadarInto(svg, series) {
   const W = 320, H = 320;
   const cx = W / 2, cy = H / 2;
   const maxR = 110;
@@ -2494,17 +2588,24 @@ function renderRadarSVG(scores) {
     parts.push(`<line x1="${cx}" y1="${cy}" x2="${cx + maxR * Math.cos(a)}" y2="${cy + maxR * Math.sin(a)}" stroke="#D5E8EE" stroke-width="0.5"/>`);
   });
 
-  // Data polygon
-  const dataPoints = SCALES.map((scale, i) => {
-    const r = (scores[scale] / maxScore) * maxR;
-    return `${cx + r * Math.cos(angles[i])},${cy + r * Math.sin(angles[i])}`;
-  }).join(' ');
-  parts.push(`<polygon points="${dataPoints}" fill="rgba(0, 184, 212, 0.18)" stroke="#00B8D4" stroke-width="2"/>`);
-  SCALES.forEach((scale, i) => {
-    const r = (scores[scale] / maxScore) * maxR;
-    const x = cx + r * Math.cos(angles[i]);
-    const y = cy + r * Math.sin(angles[i]);
-    parts.push(`<circle cx="${x}" cy="${y}" r="4" fill="#00B8D4" stroke="#fff" stroke-width="1.5"/>`);
+  // Data polygons
+  const hexToRgba = (hex, a) => {
+    const n = parseInt(hex.slice(1), 16);
+    return `rgba(${(n >> 16) & 255}, ${(n >> 8) & 255}, ${n & 255}, ${a})`;
+  };
+  series.forEach(({ scores, color }) => {
+    const dataPoints = SCALES.map((scale, i) => {
+      const r = (scores[scale] / maxScore) * maxR;
+      return `${cx + r * Math.cos(angles[i])},${cy + r * Math.sin(angles[i])}`;
+    }).join(' ');
+    const fillAlpha = series.length === 1 ? 0.18 : 0.10;
+    parts.push(`<polygon points="${dataPoints}" fill="${hexToRgba(color, fillAlpha)}" stroke="${color}" stroke-width="2"/>`);
+    SCALES.forEach((scale, i) => {
+      const r = (scores[scale] / maxScore) * maxR;
+      const x = cx + r * Math.cos(angles[i]);
+      const y = cy + r * Math.sin(angles[i]);
+      parts.push(`<circle cx="${x}" cy="${y}" r="${series.length === 1 ? 4 : 3}" fill="${color}" stroke="#fff" stroke-width="1.5"/>`);
+    });
   });
 
   // Labels
@@ -2513,10 +2614,16 @@ function renderRadarSVG(scores) {
     const x = cx + r * Math.cos(angles[i]);
     const y = cy + r * Math.sin(angles[i]);
     parts.push(`<text x="${x}" y="${y + 4}" font-family="Anton" font-size="14" fill="#0A2A33" text-anchor="middle">${scale}</text>`);
-    parts.push(`<text x="${x}" y="${y + 18}" font-family="JetBrains Mono" font-size="10" fill="#5A7A82" text-anchor="middle">${scores[scale]}</text>`);
+    if (series.length === 1) {
+      parts.push(`<text x="${x}" y="${y + 18}" font-family="JetBrains Mono" font-size="10" fill="#5A7A82" text-anchor="middle">${series[0].scores[scale]}</text>`);
+    }
   });
 
   svg.innerHTML = parts.join('');
+}
+
+function renderRadarSVG(scores) {
+  renderRadarInto(document.getElementById('radar-svg'), [{ scores, color: '#00B8D4' }]);
 }
 
 function renderStatGrid(scores) {
@@ -2668,6 +2775,11 @@ function showResult() {
   STATE.result = { scores, classId: cls.id, rarity, date: new Date().toISOString() };
   saveState();
 
+  // Avatar
+  const avatarSrc = AVATAR_SRC[STATE.profile.avatar] || AVATAR_SRC.m;
+  document.getElementById('class-hero-bg-img').src = avatarSrc;
+  document.getElementById('player-card-bg-img').src = avatarSrc;
+
   // Class hero
   document.getElementById('class-hero-rarity').textContent = rarity;
   document.getElementById('class-hero-num').textContent = `CLASS ${String(cls.id).padStart(2, '0')} / 25`;
@@ -2688,6 +2800,226 @@ function showResult() {
 }
 
 /* ============================================================
+   SHARE（結果URL・カード画像）
+   ============================================================ */
+function shareResultUrl() {
+  if (!STATE.result) return;
+  // スコア5値のみ（氏名などのPIIは載せない）。受信側でクラスを再計算する
+  const url = location.href.split('#')[0] + '#' + TACore.encodeShare(STATE.result.scores);
+  if (navigator.share) {
+    navigator.share({ title: 'TA DIAGNOSIS — エゴグラム診断結果', url }).catch(() => {});
+    return;
+  }
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(
+      () => showToast('結果URLをコピーしました。メールやLINEに貼り付けて共有できます'),
+      () => prompt('このURLをコピーしてください', url)
+    );
+  } else {
+    prompt('このURLをコピーしてください', url);
+  }
+}
+
+function downloadCardImage() {
+  if (!STATE.result) return;
+  const s = STATE.result.scores;
+  const cls = CLASSES.find(c => c.id === STATE.result.classId) || CLASSES[0];
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  const bars = SCALES.map((sc, i) => {
+    const x = 90 + i * 216;
+    const h = Math.round(s[sc] / 30 * 220);
+    const y = 540 - h;
+    return `<rect x="${x}" y="${y}" width="120" height="${Math.max(h, 2)}" rx="6" fill="#00B8D4"/>` +
+      `<text x="${x + 60}" y="${y - 12}" font-size="34" fill="#E8F4F8" text-anchor="middle" font-family="Arial, sans-serif" font-weight="bold">${s[sc]}</text>` +
+      `<text x="${x + 60}" y="578" font-size="28" fill="#7FA8B3" text-anchor="middle" font-family="Arial, sans-serif">${sc}</text>`;
+  }).join('');
+
+  const svgSrc =
+    `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">` +
+    `<rect width="1200" height="630" fill="#0A2A33"/>` +
+    `<rect x="0" y="0" width="1200" height="8" fill="#00B8D4"/>` +
+    `<text x="90" y="86" font-size="30" fill="#00B8D4" font-family="Arial, sans-serif" letter-spacing="6">TA DIAGNOSIS ・ ${esc(STATE.result.rarity)}</text>` +
+    `<text x="90" y="170" font-size="72" fill="#E8F4F8" font-family="Arial, sans-serif" font-weight="bold">THE ${esc(cls.name)}</text>` +
+    `<text x="90" y="222" font-size="36" fill="#9FC2CC" font-family="Arial, sans-serif">${esc(cls.jp)} ・ CLASS ${String(cls.id).padStart(2, '0')} / 25</text>` +
+    `<text x="90" y="268" font-size="26" fill="#7FA8B3" font-family="Arial, sans-serif">[ ${esc(cls.formula)} ]</text>` +
+    bars +
+    `<text x="1110" y="600" font-size="22" fill="#5A7A82" text-anchor="end" font-family="Arial, sans-serif">エゴグラム診断（交流分析TA）</text>` +
+    `</svg>`;
+
+  const img = new Image();
+  img.onload = () => {
+    const canvas = document.createElement('canvas');
+    canvas.width = 1200; canvas.height = 630;
+    canvas.getContext('2d').drawImage(img, 0, 0);
+    canvas.toBlob(blob => {
+      if (!blob) { showToast('画像の生成に失敗しました'); return; }
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'ta-diagnosis-card.png';
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+    }, 'image/png');
+  };
+  img.onerror = () => showToast('画像の生成に失敗しました');
+  img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgSrc);
+}
+
+/* ============================================================
+   共有URLで開いたときの閲覧ビュー
+   ============================================================ */
+function renderSharedView(scores) {
+  const cls = classify(scores);
+  const rarity = TA_RARITY.byClassId[cls.id].rarity;
+
+  document.getElementById('class-hero-eyebrow').textContent = 'SHARED RESULT ・ 共有された結果';
+  document.getElementById('class-hero-rarity').textContent = rarity;
+  document.getElementById('class-hero-num').textContent = `CLASS ${String(cls.id).padStart(2, '0')} / 25`;
+  document.getElementById('class-hero-name').innerHTML = `THE ${formatClassName(cls.name)}`;
+  document.getElementById('class-hero-jp').textContent = cls.jp;
+  document.getElementById('class-hero-formula').textContent = `[ ${cls.formula} ]`;
+  document.getElementById('class-hero-desc').textContent = cls.desc;
+
+  renderEgogramSVG(scores);
+  renderRadarSVG(scores);
+  renderStatGrid(scores);
+  renderScaleDetails(scores);
+  renderInteractionHints(scores);
+  renderBehaviorHints(scores);
+
+  // 共有ビューでは個人情報を含むPLAYER CARDと操作ボタンを出さない
+  document.getElementById('section-player-card').style.display = 'none';
+  document.getElementById('result-actions').innerHTML =
+    '<button class="btn btn-primary btn-block" onclick="startOwnScan()">自分も診断してみる</button>';
+
+  showScreen('screen-result');
+}
+
+function startOwnScan() {
+  history.replaceState(null, '', location.pathname + location.search);
+  location.reload();
+}
+
+/* ============================================================
+   FAMILY MODE（最大5人・端末内保存）
+   ============================================================ */
+const MEMBERS_KEY = 'ta_egogram_members';
+const FAMILY_COLORS = ['#00B8D4', '#C76B6B', '#C9923A', '#4A7C5A', '#8E6BA8'];
+const MAX_MEMBERS = 5;
+
+function loadMembers() {
+  try {
+    const raw = localStorage.getItem(MEMBERS_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr : [];
+  } catch(e) { return []; }
+}
+
+function saveMembers(members) {
+  try { localStorage.setItem(MEMBERS_KEY, JSON.stringify(members)); return true; }
+  catch(e) { showToast('保存に失敗しました（端末の空き容量やプライベートモードを確認してください）'); return false; }
+}
+
+function saveAsMember() {
+  if (!STATE.result) return;
+  const members = loadMembers();
+  if (members.length >= MAX_MEMBERS) {
+    alert(`保存できるのは${MAX_MEMBERS}人までです。\n家族画面でメンバーを削除してから保存してください。`);
+    goFamily();
+    return;
+  }
+  members.push({
+    id: Date.now(),
+    name: STATE.profile.name || 'メンバー',
+    avatar: STATE.profile.avatar || 'm',
+    scores: STATE.result.scores,
+    classId: STATE.result.classId,
+    rarity: STATE.result.rarity,
+    date: STATE.result.date
+  });
+  if (saveMembers(members)) {
+    showToast('家族メンバーに保存しました');
+    goFamily();
+  }
+}
+
+function deleteMember(id) {
+  if (!confirm('このメンバーを削除しますか？')) return;
+  saveMembers(loadMembers().filter(m => m.id !== id));
+  renderFamily();
+}
+
+function goFamily() {
+  renderFamily();
+  showScreen('screen-family');
+}
+
+function topScaleOf(scores) {
+  let top = SCALES[0];
+  for (const s of SCALES) { if (scores[s] > scores[top]) top = s; }
+  return top;
+}
+
+function renderFamily() {
+  const members = loadMembers();
+  document.getElementById('family-empty').style.display = members.length ? 'none' : '';
+  document.getElementById('family-content').style.display = members.length ? '' : 'none';
+  if (!members.length) return;
+
+  // 重ね合わせレーダー
+  renderRadarInto(
+    document.getElementById('family-radar-svg'),
+    members.map((m, i) => ({ scores: m.scores, color: FAMILY_COLORS[i % FAMILY_COLORS.length] }))
+  );
+
+  // メンバー一覧
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const list = document.getElementById('family-list');
+  list.innerHTML = '';
+  members.forEach((m, i) => {
+    const cls = CLASSES.find(c => c.id === m.classId) || CLASSES[0];
+    const color = FAMILY_COLORS[i % FAMILY_COLORS.length];
+    const scoreLine = SCALES.map(s => `${s} ${m.scores[s]}`).join(' / ');
+    const div = document.createElement('div');
+    div.className = 'scale-detail';
+    div.innerHTML = `
+      <div class="scale-detail-header">
+        <div class="scale-detail-name-wrap">
+          <span class="scale-dot" style="background:${color}"></span>
+          <img src="${AVATAR_SRC[m.avatar] || AVATAR_SRC.m}" alt="" style="width:32px;height:32px;border-radius:6px;">
+          <span class="scale-detail-label">${esc(m.name)}</span>
+        </div>
+        <button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="deleteMember(${m.id})">削除</button>
+      </div>
+      <div class="scale-detail-text">THE ${esc(cls.name)}（${esc(cls.jp)}）・ ${esc(m.rarity)}<br>${scoreLine}</div>
+    `;
+    list.appendChild(div);
+  });
+
+  // 各メンバーへの関わり方ヒント（最高尺度ベース）
+  const hints = document.getElementById('family-hints');
+  hints.innerHTML = '';
+  members.forEach((m, i) => {
+    const top = topScaleOf(m.scores);
+    const hint = INTERACTION_HINTS[top];
+    const meta = SCALE_META[top];
+    const color = FAMILY_COLORS[i % FAMILY_COLORS.length];
+    const div = document.createElement('div');
+    div.className = 'hint-block';
+    div.style.borderLeftColor = color;
+    div.innerHTML = `
+      <div class="hint-block-eyebrow" style="color:${color}">${esc(m.name)} さんへ（${meta.name}が主役）</div>
+      <div class="hint-block-headline">${hint.headline}</div>
+      <p class="hint-block-keyword">キーワード「${hint.keyword}」</p>
+      <ul class="hint-list">
+        ${hint.items.slice(0, 2).map(item => `<li>${item}</li>`).join('')}
+      </ul>
+    `;
+    hints.appendChild(div);
+  });
+}
+
+/* ============================================================
    RESTART
    ============================================================ */
 function restartScan() {
@@ -2703,6 +3035,9 @@ function restartScan() {
   fAge.value = '';
   fGender.value = '';
   fSport.value = 'climbing';
+  document.getElementById('f-sport-other').value = '';
+  onSportChange();
+  selectAvatar('m');
   document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
   validateProfile();
   showScreen('screen-welcome');
@@ -2712,6 +3047,13 @@ function restartScan() {
    INIT
    ============================================================ */
 (function init() {
+  // 共有URL（#r=1&s=...）で開かれた場合は閲覧ビューを表示
+  const sharedScores = TACore.decodeShare(location.hash);
+  if (sharedScores) {
+    renderSharedView(sharedScores);
+    return;
+  }
+
   const saved = loadState();
   if (saved) {
     Object.assign(STATE, saved);
@@ -2726,6 +3068,11 @@ function restartScan() {
       document.getElementById('f-sport').value = STATE.profile.sport || 'climbing';
       onSportChange();
       if (STATE.profile.discipline) selectDiscipline(STATE.profile.discipline);
+      if (STATE.profile.avatar) selectAvatar(STATE.profile.avatar);
+
+      const avatarSrc = AVATAR_SRC[STATE.profile.avatar] || AVATAR_SRC.m;
+      document.getElementById('class-hero-bg-img').src = avatarSrc;
+      document.getElementById('player-card-bg-img').src = avatarSrc;
 
       document.getElementById('class-hero-rarity').textContent = STATE.result.rarity;
       document.getElementById('class-hero-num').textContent = `CLASS ${String(cls.id).padStart(2, '0')} / 25`;

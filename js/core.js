@@ -350,6 +350,28 @@ function scaleLevel(score) {
   return 'low';
 }
 
+/* ------------------------------------------------------------
+   結果共有URL: "#r=1&s=CP.NP.A.FC.AC"
+   スコア5値のみを載せる（氏名などのPIIは絶対に含めない）。
+   クラス・レアリティは受信側でスコアから再計算するため改竄は無効。
+   ------------------------------------------------------------ */
+function encodeShare(scores) {
+  return 'r=1&s=' + SCALES.map(s => scores[s]).join('.');
+}
+
+/** 共有ハッシュを検証付きで復元。不正なら null（例外を投げない） */
+function decodeShare(hash) {
+  const m = /(?:^|[#&])r=1&s=(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})\.(\d{1,2})(?:$|&)/.exec(hash || '');
+  if (!m) return null;
+  const scores = {};
+  for (let i = 0; i < SCALES.length; i++) {
+    const v = Number(m[i + 1]);
+    if (!Number.isInteger(v) || v < 0 || v > MAX_SCALE_SCORE) return null;
+    scores[SCALES[i]] = v;
+  }
+  return scores;
+}
+
 const TACore = {
   SCALES,
   QUESTIONS,
@@ -358,7 +380,9 @@ const TACore = {
   CLASSES,
   calculateScores,
   classify,
-  scaleLevel
+  scaleLevel,
+  encodeShare,
+  decodeShare
 };
 
 global.TACore = TACore;

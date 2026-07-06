@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0A2A33"/>
+      <stop offset="1" stop-color="#0F3D4A"/>
+    </linearGradient>
+  </defs>
+  <rect width="200" height="200" fill="url(#bg)"/>
+  <!-- ホールド -->
+  <circle cx="38" cy="36" r="9" fill="#1B5666"/>
+  <circle cx="162" cy="26" r="7" fill="#1B5666"/>
+  <circle cx="176" cy="120" r="8" fill="#1B5666"/>
+  <circle cx="24" cy="150" r="7" fill="#1B5666"/>
+  <circle cx="140" cy="52" r="10" fill="#00B8D4"/>
+  <!-- クライマー -->
+  <g stroke="#E8F4F8" stroke-width="9" stroke-linecap="round" fill="none">
+    <!-- 右腕（ホールドへ） -->
+    <path d="M 132 60 L 112 84"/>
+    <!-- 左腕 -->
+    <path d="M 64 96 L 92 92"/>
+    <!-- 胴体 -->
+    <path d="M 104 90 L 96 132"/>
+    <!-- 右脚 -->
+    <path d="M 96 132 L 124 152 L 128 174"/>
+    <!-- 左脚 -->
+    <path d="M 96 132 L 72 150 L 76 172"/>
+  </g>
+  <!-- 頭 -->
+  <circle cx="110" cy="74" r="13" fill="#E8F4F8"/>
+  <!-- チョークバッグ -->
+  <circle cx="96" cy="134" r="6" fill="#00B8D4"/>
+</svg>

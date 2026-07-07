@@ -2,9 +2,7 @@
 
 交流分析（Transactional Analysis / TA）のエゴグラムを、50問のセルフチェックで診断するWebアプリです。**完全オフラインで動作し、回答・結果は端末内にのみ保存され、サーバーには一切送信されません。**
 
-👉 **公開URL:** https://team-kenken.github.io/kenken-egogram/
-
-![CI](https://github.com/team-kenken/kenken-egogram/actions/workflows/ci.yml/badge.svg)
+> ℹ️ **限定公開**：このサイトは検索エンジンには表示されません（`noindex` / `robots.txt`）。URLを知っている人だけがアクセスできます。URLの共有範囲にご注意ください。
 
 ## 特長
 - 50問に答えると、5つの自我状態 **CP / NP / A / FC / AC** のバランスを算出

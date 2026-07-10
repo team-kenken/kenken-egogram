@@ -1796,23 +1796,23 @@
       </div>
 
       <div id="f-discipline-wrap" class="field-group">
-        <label class="field-label">DISCIPLINE <span class="field-label-jp">種目</span></label>
+        <label class="field-label">DISCIPLINE <span class="field-label-jp">種目（複数選択OK）</span></label>
         <div class="pill-group">
-          <div class="pill" data-discipline="lead" onclick="selectDiscipline('lead')">
+          <div class="pill" data-discipline="lead" onclick="toggleDiscipline('lead')">
             <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M12 2v20M5 9l7-7 7 7"/>
             </svg>
             <div class="pill-label">LEAD</div>
             <div class="pill-jp">リード</div>
           </div>
-          <div class="pill" data-discipline="boulder" onclick="selectDiscipline('boulder')">
+          <div class="pill" data-discipline="boulder" onclick="toggleDiscipline('boulder')">
             <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polygon points="12,2 22,20 2,20"/>
             </svg>
             <div class="pill-label">BOULDER</div>
             <div class="pill-jp">ボルダー</div>
           </div>
-          <div class="pill" data-discipline="speed" onclick="selectDiscipline('speed')">
+          <div class="pill" data-discipline="speed" onclick="toggleDiscipline('speed')">
             <svg class="pill-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="13,2 3,14 12,14 11,22 21,10 12,10"/>
             </svg>
@@ -2273,7 +2273,7 @@ const STATE = {
     age: '',
     gender: '',
     sport: 'climbing',
-    discipline: '',
+    disciplines: [],
     avatar: 'm'
   },
   answers: new Array(50).fill(null),
@@ -2345,7 +2345,9 @@ function startPersonal() {
       document.getElementById('f-gender').value = STATE.profile.gender || '';
       document.getElementById('f-sport').value = STATE.profile.sport || 'climbing';
       onSportChange();
-      if (STATE.profile.discipline) selectDiscipline(STATE.profile.discipline);
+      STATE.profile.disciplines = normalizeDisciplines(STATE.profile);
+      delete STATE.profile.discipline;
+      syncDisciplinePills();
       if (STATE.profile.name) {
         showScreen('screen-question');
         renderQuestion();
@@ -2354,7 +2356,7 @@ function startPersonal() {
     } else {
       clearState();
       Object.assign(STATE, {
-        profile: { name:'', age:'', gender:'', sport:'climbing', discipline:'', avatar:'m' },
+        profile: { name:'', age:'', gender:'', sport:'climbing', disciplines:[], avatar:'m' },
         answers: new Array(50).fill(null),
         currentIndex: 0,
         result: null
@@ -2406,11 +2408,29 @@ function onSportChange() {
   document.getElementById('f-sport-other-wrap').style.display = v === 'other' ? '' : 'none';
 }
 
-function selectDiscipline(d) {
-  STATE.profile.discipline = d;
+/* 種目は複数選択可（リード・ボルダー・スピードを任意に組み合わせられる）。
+   STATE.profile.disciplines は配列。 */
+function toggleDiscipline(d) {
+  const list = STATE.profile.disciplines;
+  const i = list.indexOf(d);
+  if (i >= 0) list.splice(i, 1);
+  else list.push(d);
+  syncDisciplinePills();
+}
+
+/** STATE.profile.disciplines に合わせてピルの選択表示を更新する */
+function syncDisciplinePills() {
+  const list = STATE.profile.disciplines || [];
   document.querySelectorAll('.pill').forEach(p => {
-    p.classList.toggle('selected', p.dataset.discipline === d);
+    p.classList.toggle('selected', list.indexOf(p.dataset.discipline) >= 0);
   });
+}
+
+/** 保存データを配列へ正規化（旧バージョンの単一文字列 discipline も受ける） */
+function normalizeDisciplines(profile) {
+  if (Array.isArray(profile.disciplines)) return profile.disciplines;
+  if (typeof profile.discipline === 'string' && profile.discipline) return [profile.discipline];
+  return [];
 }
 
 const AVATAR_SRC = {
@@ -3063,7 +3083,7 @@ function restartScan() {
   if (!confirm('もう一度診断を始めますか？\n（現在の結果はクリアされます）')) return;
   clearState();
   Object.assign(STATE, {
-    profile: { name:'', age:'', gender:'', sport:'climbing', discipline:'', avatar:'m' },
+    profile: { name:'', age:'', gender:'', sport:'climbing', disciplines:[], avatar:'m' },
     answers: new Array(50).fill(null),
     currentIndex: 0,
     result: null
@@ -3075,7 +3095,7 @@ function restartScan() {
   document.getElementById('f-sport-other').value = '';
   onSportChange();
   selectAvatar('m');
-  document.querySelectorAll('.pill').forEach(p => p.classList.remove('selected'));
+  syncDisciplinePills();
   validateProfile();
   showScreen('screen-welcome');
 }
@@ -3104,7 +3124,9 @@ function restartScan() {
       document.getElementById('f-gender').value = STATE.profile.gender || '';
       document.getElementById('f-sport').value = STATE.profile.sport || 'climbing';
       onSportChange();
-      if (STATE.profile.discipline) selectDiscipline(STATE.profile.discipline);
+      STATE.profile.disciplines = normalizeDisciplines(STATE.profile);
+      delete STATE.profile.discipline;
+      syncDisciplinePills();
       if (STATE.profile.avatar) selectAvatar(STATE.profile.avatar);
 
       const avatarSrc = AVATAR_SRC[STATE.profile.avatar] || AVATAR_SRC.m;

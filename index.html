@@ -2903,10 +2903,11 @@ function renderScaleDetails(scores) {
   sorted.forEach(scale => {
     const meta = SCALE_META[scale];
     const score = scores[scale];
-    let level, levelClass, text;
-    if (score >= 18) { level = '高'; levelClass = 'scale-detail-level-high'; text = SCALE_DESC[scale].high; }
-    else if (score >= 13) { level = '中'; levelClass = ''; text = SCALE_DESC[scale].mid; }
-    else { level = '低'; levelClass = 'scale-detail-level-low'; text = SCALE_DESC[scale].low; }
+    // 高中低の閾値は core.js の scaleLevel に一元化（重複定義によるズレを防ぐ）
+    const lv = TACore.scaleLevel(score); // 'high' | 'mid' | 'low'
+    const level = lv === 'high' ? '高' : lv === 'mid' ? '中' : '低';
+    const levelClass = lv === 'high' ? 'scale-detail-level-high' : lv === 'low' ? 'scale-detail-level-low' : '';
+    const text = SCALE_DESC[scale][lv];
 
     const div = document.createElement('div');
     div.className = 'scale-detail';

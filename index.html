@@ -116,12 +116,120 @@
     letter-spacing: 0.1em;
     margin-top: 2px;
   }
+  .topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
   .topbar-version {
     font-family: var(--font-mono);
     font-size: 9px;
     color: var(--ink-faint);
     letter-spacing: 0.2em;
   }
+  .help-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 6px 12px;
+    border: 1px solid var(--accent);
+    border-radius: 999px;
+    background: var(--accent-bg);
+    color: var(--accent-deep);
+    font-family: var(--font-display);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    cursor: pointer;
+    transition: background 0.15s, color 0.15s;
+  }
+  .help-btn:hover { background: var(--accent); color: #fff; }
+  .help-btn svg { width: 15px; height: 15px; }
+
+  /* Help modal */
+  .help-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+    background: rgba(10, 42, 51, 0.55);
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    display: none;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 24px 16px;
+    overflow-y: auto;
+  }
+  .help-overlay.open { display: flex; }
+  .help-modal {
+    background: var(--bg-card);
+    border-radius: 16px;
+    max-width: 560px;
+    width: 100%;
+    margin: auto;
+    box-shadow: 0 20px 60px rgba(10, 42, 51, 0.3);
+    overflow: hidden;
+    animation: helpIn 0.2s ease;
+  }
+  @keyframes helpIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+  .help-header {
+    position: sticky;
+    top: 0;
+    background: linear-gradient(135deg, var(--accent), var(--accent-deep));
+    color: #fff;
+    padding: 18px 22px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .help-header-title { font-family: var(--font-display); font-size: 18px; letter-spacing: 0.06em; }
+  .help-header-sub { font-size: 10px; opacity: 0.85; letter-spacing: 0.15em; margin-top: 2px; }
+  .help-close {
+    width: 32px; height: 32px;
+    border: none; border-radius: 50%;
+    background: rgba(255,255,255,0.2);
+    color: #fff; font-size: 20px; line-height: 1;
+    cursor: pointer; flex-shrink: 0;
+  }
+  .help-close:hover { background: rgba(255,255,255,0.35); }
+  .help-body { padding: 22px; }
+  .help-step {
+    display: flex;
+    gap: 14px;
+    padding: 14px 0;
+    border-bottom: 0.5px solid var(--line);
+  }
+  .help-step:last-of-type { border-bottom: none; }
+  .help-step-num {
+    flex-shrink: 0;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    background: var(--accent-bg);
+    color: var(--accent-deep);
+    font-family: var(--font-display);
+    font-size: 15px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .help-step-title { font-weight: 700; color: var(--ink); font-size: 14px; margin-bottom: 3px; }
+  .help-step-text { font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+  .help-section-label {
+    font-family: var(--font-display);
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent-deep);
+    margin: 20px 0 8px;
+  }
+  .help-faq { font-size: 13px; line-height: 1.7; color: var(--ink-soft); }
+  .help-faq b { color: var(--ink); }
+  .help-note {
+    margin-top: 18px;
+    padding: 12px 14px;
+    background: var(--line-soft);
+    border-radius: 10px;
+    font-size: 11px;
+    line-height: 1.7;
+    color: var(--ink-soft);
+  }
+  .help-body .btn { margin-top: 20px; }
 
   /* App container */
   .app {
@@ -1577,7 +1685,74 @@
       <div class="brand-jp">TA診断アプリ</div>
     </div>
   </div>
-  <div class="topbar-version">v1.0</div>
+  <div class="topbar-right">
+    <button class="help-btn" onclick="openHelp()" aria-label="使い方を見る">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>使い方</span>
+    </button>
+    <div class="topbar-version">v1.0</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     使い方（説明書）モーダル
+     ============================================================ -->
+<div id="help-overlay" class="help-overlay" onclick="if(event.target===this)closeHelp()">
+  <div class="help-modal" role="dialog" aria-modal="true" aria-label="使い方">
+    <div class="help-header">
+      <div>
+        <div class="help-header-title">使い方ガイド</div>
+        <div class="help-header-sub">HOW TO USE</div>
+      </div>
+      <button class="help-close" onclick="closeHelp()" aria-label="閉じる">×</button>
+    </div>
+    <div class="help-body">
+      <p class="help-faq" style="margin-bottom:6px;">
+        50問の質問に答えると、あなたの「5つの心のバランス（エゴグラム）」を診断します。むずかしい準備はいりません。下の流れで進めるだけです。
+      </p>
+
+      <div class="help-section-label">■ 診断のはじめ方</div>
+      <div class="help-step">
+        <div class="help-step-num">1</div>
+        <div>
+          <div class="help-step-title">「個人モード」を選ぶ</div>
+          <div class="help-step-text">トップの「個人モード（START SCAN）」を押します。名前（ニックネームでOK）と年代を入れてスタート。</div>
+        </div>
+      </div>
+      <div class="help-step">
+        <div class="help-step-num">2</div>
+        <div>
+          <div class="help-step-title">50問に「4段階」で答える</div>
+          <div class="help-step-text">深く考えず、直感でOK。<b>YES（いつも）／OFTEN（ときどき）／RARE（たまに）／NO（めったにない）</b>の4つから選びます。約10分で終わります。</div>
+        </div>
+      </div>
+      <div class="help-step">
+        <div class="help-step-num">3</div>
+        <div>
+          <div class="help-step-title">結果を見る</div>
+          <div class="help-step-text">グラフ・あなたのタイプ（全25種）・関わり方のヒントが出ます。「結果URLをシェア」や「カード画像を保存」で人に見せることもできます。</div>
+        </div>
+      </div>
+
+      <div class="help-section-label">■ 家族みんなでやるには？</div>
+      <p class="help-faq">
+        <b>同じスマホ（同じブラウザ）で</b>順番に診断します。1人終わるごとに結果画面の「<b>家族メンバーに保存</b>」を押すと、最大5人まで保存され、「家族モード」でグラフを重ねて比べられます。<br>
+        ※ 別々のスマホでやると重ね合わせ比較はできません。その場合は「結果URLをシェア」で1人分ずつ送り合ってください。
+      </p>
+
+      <div class="help-section-label">■ データはどこに保存される？</div>
+      <p class="help-faq">
+        入力内容と結果は<b>あなたのスマホ（ブラウザ）の中だけ</b>に保存されます。<b>インターネット上には一切送られません</b>（通信していないので機内モードでも動きます）。<br>
+        ブラウザの履歴・サイトデータを消したり、別のスマホ・別ブラウザ・シークレットモードで開くと、結果は残りません。
+      </p>
+
+      <div class="help-note">
+        ※ 本アプリは交流分析（TA）理論に基づくセルフチェックであり、医学的・心理学的な診断ではありません。結果は自己理解のための参考としてご活用ください。
+      </div>
+
+      <button class="btn btn-primary btn-block" onclick="closeHelp()">とじる</button>
+    </div>
+  </div>
 </div>
 
 <div class="app">
@@ -2365,6 +2540,21 @@ function startPersonal() {
   }
   showScreen('screen-profile');
 }
+
+/* ============================================================
+   HELP（使い方モーダル）
+   ============================================================ */
+function openHelp() {
+  document.getElementById('help-overlay').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeHelp() {
+  document.getElementById('help-overlay').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeHelp();
+});
 
 /* ============================================================
    TOAST（画面内通知）

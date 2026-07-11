@@ -2233,10 +2233,25 @@
         </div>
       </div>
 
+      <div class="result-section" id="family-total-section">
+        <div class="result-section-eyebrow">FAMILY TOTAL</div>
+        <h3 class="result-section-title2">家族トータル診断</h3>
+        <p class="result-section-desc">メンバー全員の平均エゴグラムから見た、家族全体の傾向（家風）です。</p>
+        <div class="stat-grid-5" id="family-avg-grid"></div>
+        <div id="family-total-notes"></div>
+      </div>
+
       <div class="result-section">
         <div class="result-section-eyebrow">MEMBERS</div>
-        <h3 class="result-section-title2">メンバー一覧</h3>
+        <h3 class="result-section-title2">メンバー一覧と役割</h3>
         <div id="family-list"></div>
+      </div>
+
+      <div class="result-section" id="family-pairs-section">
+        <div class="result-section-eyebrow">PAIRS</div>
+        <h3 class="result-section-title2">ふたりの相性</h3>
+        <p class="result-section-desc">各ペアの「最も高い自我状態」の組み合わせから見た、かみ合うポイントとすれ違い注意ポイントです。</p>
+        <div id="family-pairs"></div>
       </div>
 
       <div class="result-section">
@@ -2251,6 +2266,10 @@
           新しく診断する
         </button>
       </div>
+
+      <p class="disclaimer-note">
+        ※ 家族トータル・相性・役割は、交流分析（TA）理論の自我状態の考え方に基づく参考情報です。医学的・心理学的な診断ではなく、家族の会話のきっかけとしてご活用ください。
+      </p>
     </div>
   </section>
 
@@ -2437,6 +2456,61 @@ const BEHAVIOR_HINTS = {
     ],
     blockers: ['気にしない、気にしない', '言わないと損するぞ', '批判を気にしてたら何もできない', '細かいことにこだわるな', 'クヨクヨするな']
   }
+};
+
+/* ============================================================
+   FAMILY — 役割・家風・ペア相性の解説データ
+   （TA理論〔自我状態の相互作用〕に基づく参考情報。
+     個人の最高尺度＝topScaleOf の結果をキーに選択する）
+   ============================================================ */
+const FAMILY_ROLES = {
+  CP: { role: 'ルール番・監督役', desc: '家の約束やけじめを守らせる役。頼れる存在だが、小言が増えやすい。' },
+  NP: { role: '世話役・応援団長', desc: 'みんなを支えて励ます役。頑張りすぎ・おせっかいに注意。' },
+  A:  { role: '参謀・作戦担当', desc: '冷静に情報を集めて段取りする役。理屈っぽくなりすぎに注意。' },
+  FC: { role: 'ムードメーカー', desc: '家を明るくする太陽役。調子に乗りすぎ・約束忘れに注意。' },
+  AC: { role: '気配りの調整役', desc: 'みんなの間を取り持つ役。我慢をため込みやすいので周りのケアが大切。' }
+};
+
+const FAMILY_SCALE_NOTES = {
+  CP: {
+    high: '約束やけじめを重んじる、しっかりした家風。「正しさ」同士がぶつかると硬直しやすいので、勝ち負けではなく「どうしたいか」で話し合うのがコツ。',
+    low:  'こだわりの少ない、おおらかな家風。その分、時間や約束がルーズになりがち。家のルールは「少なく・はっきり」決めると締まる。'
+  },
+  NP: {
+    high: '支え合いと思いやりにあふれた温かい家風。一方で、甘やかしすぎ・かばいすぎで課題を先送りしやすい面も。',
+    low:  '各自が自立したドライな家風。冷たく感じさせないよう、感謝やねぎらいを意識して言葉にすると温度が上がる。'
+  },
+  A: {
+    high: '冷静に話し合って決められる、理性的な家風。事務的になりすぎないよう「楽しむだけの時間」も予定に入れて。',
+    low:  'ノリと勢いで動ける家風。見通しの甘さが出やすいので、大事な予定だけは書いて見える化を。'
+  },
+  FC: {
+    high: '笑いが多く、ノリの良い明るい家風。盛り上がる分、締めるところが緩みがち。締切と約束だけは全員で共有を。',
+    low:  'まじめで落ち着いた家風。楽しみが後回しになりがちなので、家族で「遊ぶ予定」を先に入れてしまうのがおすすめ。'
+  },
+  AC: {
+    high: 'お互いに気を遣い合う、協調的な家風。本音が出にくいので「どうしたい？」と選ばせる質問を増やすと風通しが良くなる。',
+    low:  '各自がマイペースを貫ける家風。すれ違いが増えないよう、家族の共有時間を意識して確保したい。'
+  }
+};
+
+/* ペア相性: 2人の最高尺度の組み合わせ（順不同、キーはSCALES順で正規化） */
+const PAIR_HINTS = {
+  'CP|CP': { good: '約束や筋を大切にする者同士、信頼は固い。', care: '「正しさ」のぶつかり合いになると、どちらも譲れなくなる。', tip: '勝ち負けではなく「で、どうしたい？」に話を切り替える。' },
+  'CP|NP': { good: '厳しさと優しさがそろう補完ペア。しつけ役と癒し役の分担ができる。', care: '叱責が強いと、もう一方がかばいに回って対立の構図になりがち。', tip: '叱る役・フォローする役を事前に相談して分担しておく。' },
+  'CP|A':  { good: '筋道と論理で話が早く、決め事がスムーズ。', care: '正しさと理屈が先行して、気持ちが置き去りになりやすい。', tip: '結論の前に「最近どう？」と気持ちを聞く時間を挟む。' },
+  'CP|FC': { good: '規律と自由、お互いにない魅力を持つ凸凹ペア。', care: '自由さに小言が増え、言われた側は窮屈さを感じやすい。', tip: 'ルールは「少なく・明確に」。良い行動はその場ですぐ認める。' },
+  'CP|AC': { good: '決める人と支える人で、物事は進みやすい。', care: '合わせる側が我慢や本音をため込みやすい。', tip: '決める側から「NOと言っていいよ」と先に伝えておく。' },
+  'NP|NP': { good: '思いやり同士で、家庭の温度が高い。', care: '甘やかし合い・遠慮し合いで、言うべきことを先送りしがち。', tip: '月に一度「言いにくいことを言う日」を決める。' },
+  'NP|A':  { good: '温かさと冷静さのバランスが良い組み合わせ。', care: '淡々とした反応に、支える側が物足りなさを感じることも。', tip: '「ありがとう」「助かった」を言葉にする回数を増やす。' },
+  'NP|FC': { good: '世話好きと甘え上手で、自然と仲良くなれる好相性。', care: '何でも許してもらえると、わがままが増えやすい。', tip: '「これだけはダメ」の一線を1つだけ決めて守る。' },
+  'NP|AC': { good: '優しさと気遣いで、穏やかな関係を築ける。', care: 'お互いに相手を優先して、本音がどちらからも出てこない。', tip: '「どっちがいい？」と二択で聞いて、選んでもらう練習を。' },
+  'A|A':   { good: '事実ベースで話が通じ、無駄な衝突が少ない。', care: '会話が業務連絡のようになり、関係が事務的になりがち。', tip: '目的のない雑談・遊びの時間をあえて予定に入れる。' },
+  'A|FC':  { good: '計画性とひらめきの補完ペア。組むと強い。', care: '正論が、楽しい気分をしぼませてしまうことがある。', tip: 'まず「面白いね」と乗ってから、助言はその後に。' },
+  'A|AC':  { good: '穏やかで安定した組み合わせ。', care: '淡々とした態度を「怒ってる？」と誤解しやすい。', tip: '結論だけでなく「気持ちの一言」を添えて話す。' },
+  'FC|FC': { good: 'ノリが合って、一緒にいるだけで盛り上がる。', care: '締める人がいないと、時間・約束・片付けが総崩れに。', tip: '締切と約束だけはカレンダーに書いて見える化する。' },
+  'FC|AC': { good: '引っ張る人とついていく人で、ペースは合わせやすい。', care: '合わせる側がペースに付き合い続けて、静かに疲れていく。', tip: 'その日の予定は、控えめな側の希望から先に聞く。' },
+  'AC|AC': { good: '察し合い、譲り合いのできる穏やかなペア。', care: 'どちらも決め役を避けて、物事が決まらない。', tip: '「今日の決め役」を交代制にして、小さな決断から任せ合う。' }
 };
 
 /* ============================================================
@@ -3214,6 +3288,15 @@ function renderFamily() {
   document.getElementById('family-content').style.display = members.length ? '' : 'none';
   if (!members.length) return;
 
+  // トータル診断とペア相性は2人以上で表示
+  const multi = members.length >= 2;
+  document.getElementById('family-total-section').style.display = multi ? '' : 'none';
+  document.getElementById('family-pairs-section').style.display = multi ? '' : 'none';
+  if (multi) {
+    renderFamilyTotal(members);
+    renderFamilyPairs(members);
+  }
+
   // 重ね合わせレーダー
   renderRadarInto(
     document.getElementById('family-radar-svg'),
@@ -3228,6 +3311,7 @@ function renderFamily() {
     const cls = CLASSES.find(c => c.id === m.classId) || CLASSES[0];
     const color = FAMILY_COLORS[i % FAMILY_COLORS.length];
     const scoreLine = SCALES.map(s => `${s} ${m.scores[s]}`).join(' / ');
+    const role = FAMILY_ROLES[topScaleOf(m.scores)];
     const div = document.createElement('div');
     div.className = 'scale-detail';
     div.innerHTML = `
@@ -3239,7 +3323,10 @@ function renderFamily() {
         </div>
         <button class="btn btn-secondary" style="padding:4px 12px;font-size:12px;" onclick="deleteMember(${m.id})">削除</button>
       </div>
-      <div class="scale-detail-text">THE ${esc(cls.name)}（${esc(cls.jp)}）・ ${esc(m.rarity)}<br>${scoreLine}</div>
+      <div class="scale-detail-text">
+        THE ${esc(cls.name)}（${esc(cls.jp)}）・ ${esc(m.rarity)}<br>${scoreLine}<br>
+        <b>家族での役割:</b> ${role.role} — ${role.desc}
+      </div>
     `;
     list.appendChild(div);
   });
@@ -3265,6 +3352,80 @@ function renderFamily() {
     `;
     hints.appendChild(div);
   });
+}
+
+/** 家族トータル診断: 平均エゴグラム + 最高/最低尺度の家風解説 */
+function renderFamilyTotal(members) {
+  const avg = TACore.averageScores(members.map(m => m.scores));
+  const fmt = v => (Math.round(v * 10) / 10).toFixed(1);
+
+  // 平均スコアのグリッド
+  const grid = document.getElementById('family-avg-grid');
+  grid.innerHTML = '';
+  const vals = SCALES.map(s => avg[s]);
+  const peak = Math.max(...vals);
+  const low = Math.min(...vals);
+  SCALES.forEach(scale => {
+    const v = avg[scale];
+    const cell = document.createElement('div');
+    cell.className = 'stat-cell' + (v === peak && peak > low ? ' peak' : '') + (v === low && low < peak ? ' low' : '');
+    cell.innerHTML = `
+      <div class="stat-cell-letter">${scale}</div>
+      <div class="stat-cell-num">${fmt(v)}</div>
+      <div class="stat-cell-name">${SCALE_META[scale].short}</div>
+    `;
+    grid.appendChild(cell);
+  });
+
+  // 家風解説（最高尺度＝家族の強み / 最低尺度＝伸びしろ）
+  const notes = document.getElementById('family-total-notes');
+  notes.innerHTML = '';
+  let hi = SCALES[0], lo = SCALES[0];
+  for (const s of SCALES) {
+    if (avg[s] > avg[hi]) hi = s;
+    if (avg[s] < avg[lo]) lo = s;
+  }
+  const blocks = [{ scale: hi, kind: 'high', label: '家族で最も高い' }];
+  if (lo !== hi) blocks.push({ scale: lo, kind: 'low', label: '家族で最も低い' });
+  blocks.forEach(b => {
+    const meta = SCALE_META[b.scale];
+    const div = document.createElement('div');
+    div.className = 'hint-block';
+    div.style.borderLeftColor = meta.color;
+    div.innerHTML = `
+      <div class="hint-block-eyebrow" style="color:${meta.color}">${b.label}: ${meta.name}（${b.scale}）平均 ${fmt(avg[b.scale])}</div>
+      <div class="scale-detail-text">${FAMILY_SCALE_NOTES[b.scale][b.kind]}</div>
+    `;
+    notes.appendChild(div);
+  });
+}
+
+/** ペア相性: 全ペア（最大10組）の最高尺度の組み合わせで解説 */
+function renderFamilyPairs(members) {
+  const wrap = document.getElementById('family-pairs');
+  wrap.innerHTML = '';
+  const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  for (let i = 0; i < members.length; i++) {
+    for (let j = i + 1; j < members.length; j++) {
+      const a = members[i], b = members[j];
+      const ta = topScaleOf(a.scores), tb = topScaleOf(b.scores);
+      const key = SCALES.indexOf(ta) <= SCALES.indexOf(tb) ? ta + '|' + tb : tb + '|' + ta;
+      const hint = PAIR_HINTS[key];
+      const colorA = FAMILY_COLORS[i % FAMILY_COLORS.length];
+      const div = document.createElement('div');
+      div.className = 'hint-block';
+      div.style.borderLeftColor = colorA;
+      div.innerHTML = `
+        <div class="hint-block-eyebrow" style="color:${colorA}">${esc(a.name)} × ${esc(b.name)}（${SCALE_META[ta].short} × ${SCALE_META[tb].short}）</div>
+        <ul class="hint-list">
+          <li><b>かみ合うところ:</b> ${hint.good}</li>
+          <li><b>すれ違い注意:</b> ${hint.care}</li>
+          <li><b>コツ:</b> ${hint.tip}</li>
+        </ul>
+      `;
+      wrap.appendChild(div);
+    }
+  }
 }
 
 /* ============================================================

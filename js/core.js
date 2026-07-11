@@ -350,6 +350,21 @@ function scaleLevel(score) {
   return 'low';
 }
 
+/**
+ * 複数人のスコアの尺度別平均（家族トータル診断用）。
+ * 丸めは行わず生の平均値を返す（表示側で小数1桁に丸める）。
+ * 空配列は全尺度0を返す。
+ */
+function averageScores(scoresList) {
+  const avg = { CP: 0, NP: 0, A: 0, FC: 0, AC: 0 };
+  if (!Array.isArray(scoresList) || scoresList.length === 0) return avg;
+  for (const s of scoresList) {
+    for (const sc of SCALES) avg[sc] += s[sc];
+  }
+  for (const sc of SCALES) avg[sc] /= scoresList.length;
+  return avg;
+}
+
 /* ------------------------------------------------------------
    結果共有URL: "#r=1&s=CP.NP.A.FC.AC"
    スコア5値のみを載せる（氏名などのPIIは絶対に含めない）。
@@ -381,6 +396,7 @@ const TACore = {
   calculateScores,
   classify,
   scaleLevel,
+  averageScores,
   encodeShare,
   decodeShare
 };
